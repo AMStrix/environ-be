@@ -16,6 +16,7 @@ function turnFanOn(isOn) {
 		sp.write(cmd);
 	}
 }
+//test
 setTimeout(function() { turnFanOn(true); }, 2000);
 setTimeout(function() { turnFanOn(false); }, 5 * 60 * 1000);
 

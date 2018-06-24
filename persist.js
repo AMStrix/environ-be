@@ -14,14 +14,13 @@ function filenameForTime(time) {
 }
 
 function formatDataForFile(data, time) {
-    return [time.toISOString(), data.t, data.h].join(',') + '\n';
+    return [time.toISOString(), data.t, data.h, data.f].join(',') + '\n';
 }
 
 function saveDataToFile(name, dataString, cb) {
 	fs.open(DATA_PATH + name, 'a', (err, fd) => {
 		if (err) throw err;
 		fs.write(fd, dataString, (err) => {
-			//console.log('save to file', DATA_PATH + name, err);
 			fs.close(fd, (err) => { 
 				if (err) throw err; 
 				cb && cb();
@@ -45,12 +44,14 @@ function saveData(data) {
 }
 
 function processHistoryData(from, to, data) {
-	// time, temp, humidity
+	// time, temp, humidity, fan
 	var out = [];
 	if (data) {
 		data.split('\n').forEach( x => {
 			var row = x.split(',');
-			if (row.length === 3) {
+			// fan state is a string, '1' or '0', convert it to bool
+			if (row[3]) { row[3] = {'0': false, '1': true}[row[3]]; }
+			if (row.length >= 3) {
 				if (new Date(row[0]) > from) {
 					out.push(row);
 				}
@@ -78,9 +79,6 @@ function getHistory(from, to) {
 	}
 	return fromProcessed;
 }
-
-//getHistory(new Date(), new Date());
-//getHistory((()=> {var x = new Date(); x.setDate(x.getDate()-1); return x;})(), new Date());
 
 function getHistoryFileForDay(day) {
 	var file = DATA_PATH + filenameForTime(day);

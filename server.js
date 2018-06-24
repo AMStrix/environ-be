@@ -16,7 +16,8 @@ var schema = buildSchema(`
 	type Record {
 		time: String,
 		t: Float,
-		h: Float
+		h: Float,
+		f: Boolean
 	}
 
     type Query {
@@ -29,10 +30,11 @@ var schema = buildSchema(`
 `);
 
 class Record {
-  constructor(time, t, h) {
+  constructor(time, t, h, f) {
     this.time = time;
     this.t = t;
     this.h = h;
+    this.f = f;
   }
 }
 
@@ -46,7 +48,7 @@ function resolveHistory({from, to}) {
 	}
 	
 	let recs = sensors.getHistory(new Date(from), new Date(to));
-	recs = recs.map(r => new Record(r[0], r[1], r[2]));
+	recs = recs.map(r => new Record(r[0], r[1], r[2], r[3]));
 	return recs;
 }
 
